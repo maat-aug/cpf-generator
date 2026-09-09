@@ -59,7 +59,7 @@ export function App() {
   };
 
   return (
-    <div className="dark-theme">
+    <div className={`dark-theme ${view === 'resultados' ? 'results-view' : ''}`}>
       <WavesBackground />
 
       <div className="page">

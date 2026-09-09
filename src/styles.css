@@ -115,6 +115,9 @@ a:hover { color: var(--color-accent-900); }
 
 .page { position: relative; z-index: 1; }
 .container { max-width: 900px; margin: 0 auto; padding: var(--space-8) var(--space-4) 90px; }
+.results-view { height: 100dvh; min-height: 0; overflow: hidden; }
+.results-view .container { height: 100%; padding-bottom: 0; overflow: hidden; }
+html:has(#result-section), body:has(#result-section) { overflow: hidden; }
 .page-header { margin-bottom: var(--space-8); }
 .page-header h1 { font-size: 40px; line-height: 1.1; margin: var(--space-3) 0 var(--space-2); }
 .page-subtitle { max-width: 60ch; margin: 0; font-size: 16px; line-height: 1.625; color: var(--glass-label); }
@@ -397,18 +400,22 @@ a:hover { color: var(--color-accent-900); }
 .result-empty { align-items: center; text-align: center; padding: var(--space-8) var(--space-4); }
 .result-empty p { margin: 0; color: var(--glass-label); }
 
-.result-table-card { padding: var(--space-3); }
-.result-table-scroll { max-height: 560px; overflow: auto; border-radius: var(--radius-md); }
+.result-table-card { padding: 0; min-width: 0; overflow: hidden; }
+.result-table-scroll {
+  width: 100%; min-width: 0; max-width: 100%; max-height: min(560px, calc(100dvh - 300px));
+  overflow-x: auto; overflow-y: auto; border-radius: var(--radius-3xl);
+  overscroll-behavior: contain;
+}
 
 /* — tables — */
-.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table { width: 100%; max-width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 14px; }
 .table th {
   text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
   color: color-mix(in srgb, var(--color-text) 60%, transparent);
   padding: 13px var(--space-4); border-bottom: 1px solid var(--color-divider);
   position: sticky; top: 0; background: var(--color-neutral-100);
 }
-.table td { padding: 11px var(--space-4); border-bottom: 1px solid color-mix(in srgb, var(--color-text) 6%, transparent); }
+.table td { padding: 11px var(--space-4); border-bottom: 1px solid color-mix(in srgb, var(--color-text) 6%, transparent); overflow-wrap: anywhere; }
 .table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--color-text) 2.5%, transparent); }
 .table tbody tr:hover { background: color-mix(in srgb, var(--color-accent) 8%, transparent); }
 .table tbody tr:last-child td { border-bottom: none; }
