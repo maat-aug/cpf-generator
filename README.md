@@ -7,7 +7,6 @@
 Built for QA engineers and developers who need realistic test data for Brazilian systems.
 Everything runs in the browser: no back-end, no API, no data ever leaves the machine.
 
-[![Deploy](https://github.com/maat-aug/cpf-generator/actions/workflows/azure-static-web-apps.yml/badge.svg)](https://github.com/maat-aug/cpf-generator/actions/workflows/azure-static-web-apps.yml)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
@@ -129,31 +128,6 @@ works fine in the browser. A server would add cost, latency and a privacy questi
 pulled in via dynamic `import()` only when someone actually imports or exports a
 spreadsheet, so the initial page load never pays for it.
 
-**Static export is production-only.** `output: "export"` is enabled only when
-`NODE_ENV=production`, keeping the full dev server experience locally. The trade-off:
-prerender issues surface at build time, not in `dev` — which is what `npm run preview` is for.
-
-<details>
-<summary><b>⚠️ Why <code>xlsx</code> is pinned to a URL instead of npm</b></summary>
-
-<br>
-
-```json
-"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
-```
-
-SheetJS stopped publishing to npm at `0.18.5`. That version carries two unfixed **high**
-severity advisories — prototype pollution and ReDoS — both in the spreadsheet parsing path,
-which is exactly what this app does with user-supplied files. The patched releases exist
-only on the vendor's own CDN.
-
-Two consequences worth knowing:
-
-- **Dependabot and Renovate don't track URL dependencies.** There will be no automated alert for a `0.20.4`. Check https://cdn.sheetjs.com/ manually.
-- `npm ci` now depends on `cdn.sheetjs.com` being reachable, in addition to the npm registry.
-
-</details>
-
 ---
 
 ## Architecture
@@ -230,9 +204,6 @@ Open **http://localhost:3000**.
 
 No environment variables, no database, no connection strings — there's nothing to configure.
 
-> **Note:** `npm ci` fetches `xlsx` from `cdn.sheetjs.com` in addition to the npm registry.
-> See the note above on why.
-
 ### Scripts
 
 | Script | What it does |
@@ -242,8 +213,8 @@ No environment variables, no database, no connection strings — there's nothing
 | `npm run typecheck` | `tsc --noEmit` — the only automated gate |
 | `npm run preview` | Serves the built `out/` on port 3000 |
 
-Because static export is production-only, `npm run preview` is the one place a prerender
-problem shows up before deploy. Worth running before pushing.
+`npm run preview` serves the real built output, which is the closest thing to the deployed
+site. Worth running before pushing.
 
 ---
 
@@ -267,26 +238,7 @@ Security headers (HSTS, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`,
 
 ---
 
-## Roadmap
-
-- [ ] **Automated tests** — `lib/cpf.ts` and `lib/template.ts` are pure functions and the obvious first target; `typecheck` is currently the only gate.
-- [ ] **Linting** — ESLint isn't configured yet.
-- [ ] **Other documents** — CNPJ, RG, and other Brazilian identifiers follow similar check-digit rules.
-- [ ] **Dark mode** — design tokens are already centralized in `globals.css`.
-- [ ] **CPF validation mode** — paste a list, get back which ones are valid.
-- [ ] **i18n** — the interface is currently Portuguese-only.
-
----
-
-## License
-
-No license file yet — all rights reserved by default. Open an issue if you'd like to use it.
-
----
-
 ## Author
-
-**Matheus Augusto** — Information Systems student, focused on .NET / C#.
 
 [![GitHub](https://img.shields.io/badge/GitHub-maat--aug-181717?logo=github&logoColor=white)](https://github.com/maat-aug)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Matheus_Augusto-0A66C2?logo=linkedin&logoColor=white)](https://linkedin.com/in/matheus-augusto-a89348265)
