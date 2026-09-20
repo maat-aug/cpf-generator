@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Lot, ResultRow } from './types';
-import { clampQty, generateCpfForUf, generateName } from './lib/cpf';
-import { WavesBackground } from './components/WavesBackground';
+import type { Template } from './lib/template';
+import { clampQty, generateCpfForUf, generateName, regenerateCpf } from './lib/cpf';
 import { LotCard } from './components/LotCard';
 import { GenerateBar } from './components/GenerateBar';
 import { ResultsSection } from './components/ResultsSection';
@@ -19,9 +19,14 @@ export function App() {
   const [lots, setLots] = useState<Lot[]>(() => [makeLot()]);
   const [formatted, setFormatted] = useState(true);
   const [results, setResults] = useState<ResultRow[]>([]);
+  const [template, setTemplate] = useState<Template | null>(null);
   const [generated, setGenerated] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [view, setView] = useState<View>('lotes');
+  const [selected, setSelected] = useState<ReadonlySet<number>>(() => new Set());
+  // Any new results (generate, regenerate) invalidate the selection.
+  useEffect(() => setSelected(new Set()), [results]);
+  const regenCount = view === 'resultados' ? selected.size : 0;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const updateLot = (id: number, patch: Partial<Lot>) => {
@@ -58,10 +63,14 @@ export function App() {
     });
   };
 
-  return (
-    <div className={`dark-theme ${view === 'resultados' ? 'results-view' : ''}`}>
-      <WavesBackground />
+  // Swap only the CPF of the chosen rows (same UF and mask).
+  const regenerateRows = (indices: number[]) => {
+    const pick = new Set(indices);
+    setResults(results.map((r, i) => (pick.has(i) ? { ...r, cpf: regenerateCpf(r.cpf, r.uf) } : r)));
+  };
 
+  return (
+    <div className={`app ${view === 'resultados' ? 'results-view' : ''}`}>
       <div className="page">
         <main className="container" ref={containerRef}>
           <header className="page-header">
@@ -106,21 +115,29 @@ export function App() {
           )}
 
           {view === 'resultados' && (
-            <ResultsSection results={results} generated={generated} onOpenImport={() => setImportOpen(true)} />
+            <ResultsSection
+              results={results}
+              generated={generated}
+              selected={selected}
+              onSelectedChange={setSelected}
+              template={template}
+              onOpenTemplate={() => setImportOpen(true)}
+              onClearTemplate={() => setTemplate(null)}
+            />
           )}
 
           <div id="generate-bar-section">
-            <GenerateBar formatted={formatted} onFormattedChange={setFormatted} onGenerate={onGenerate} />
+            <GenerateBar formatted={formatted} onFormattedChange={setFormatted} onGenerate={regenCount ? () => regenerateRows([...selected]) : onGenerate} regenCount={regenCount} />
           </div>
         </main>
       </div>
 
-      <ImportModal
-        open={importOpen}
-        formatted={formatted}
-        onClose={() => setImportOpen(false)}
-        onImported={(rows) => { setResults(rows); setGenerated(true); setView('resultados'); }}
-      />
+      {importOpen && (
+        <ImportModal
+          onClose={() => setImportOpen(false)}
+          onLoaded={setTemplate}
+        />
+      )}
     </div>
   );
 }

@@ -18,7 +18,7 @@ export function LotCard({ lot, index, canRemove, onChange, onDuplicate, onRemove
   const modeLabelId = `mode-label-${lot.id}`;
 
   return (
-    <div className="card elev-sm lot-card">
+    <div className="card lot-card">
       <div className="lot-card-head">
         <div className="card-kicker">Lote {index + 1}</div>
         <div className="lot-card-actions">

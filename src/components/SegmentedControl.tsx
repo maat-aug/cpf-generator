@@ -38,8 +38,7 @@ export function SegmentedControl({ name, options, value, onChange, ariaLabel, ar
     segEl.style.setProperty('--thumb-left', `${checked.offsetLeft}px`);
     segEl.style.setProperty('--thumb-width', `${checked.offsetWidth}px`);
     if (instant && thumb) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      thumb.offsetHeight;
+      void thumb.offsetHeight;
       thumb.style.transition = '';
     }
   }, [value]);

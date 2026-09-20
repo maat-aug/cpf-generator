@@ -1,6 +1,3 @@
-/* ============================================================
-   Data — regions, UFs, and the static name lists
-   ============================================================ */
 export interface UfRegion {
   digit: string;
   ufs: string[];
@@ -49,16 +46,9 @@ const LAST_NAMES = ['Silva', 'Oliveira', 'Santos', 'Souza', 'Rodrigues', 'Ferrei
 
 export const MAX_QTY_PER_LOT = 1000;
 
-/* ============================================================
-   CPF generation — Módulo 11
-   ============================================================ */
 export function digitForUf(uf: string): string | null {
   const r = UF_DATA.find(r => r.ufs.includes(uf));
   return r ? r.digit : null;
-}
-
-export function regionForDigit(digit: string): UfRegion | null {
-  return UF_DATA.find(r => r.digit === String(digit)) || null;
 }
 
 function randomRegionAndUf(): { digit: string; uf: string } {
@@ -88,10 +78,6 @@ export function formatCpf(raw: string): string {
   return raw.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
-export function cpfDigitsOnly(cpf: string | null | undefined): string {
-  return String(cpf || '').replace(/\D/g, '');
-}
-
 export function generateCpfForUf(ufValue: string, formatted: boolean): { cpf: string; uf: string } {
   let digit9: string | null, uf: string;
   if (!ufValue || ufValue === ALEATORIO) {
@@ -105,9 +91,11 @@ export function generateCpfForUf(ufValue: string, formatted: boolean): { cpf: st
   return { cpf: formatted ? formatCpf(raw) : raw, uf };
 }
 
-/* ============================================================
-   Name generation — prefix sanitization + word-count rules
-   ============================================================ */
+/** New valid CPF for the same UF, keeping the original's mask style. Unknown UFs get a random region. */
+export function regenerateCpf(oldCpf: string, uf: string): string {
+  return generateCpfForUf(digitForUf(uf) ? uf : ALEATORIO, /\D/.test(oldCpf)).cpf;
+}
+
 function randomFirst(): string { return FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]; }
 function randomLast(): string { return LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]; }
 
