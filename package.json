@@ -1,26 +1,28 @@
 {
   "name": "cpf-generator",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "start": "node server.mjs"
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "preview": "npx --yes serve out -l 3000"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.170.33",
-    "@tanstack/react-start": "^1.168.50",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "xlsx": "^0.18.5"
+    "next": "16.3.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^6.1.1",
-    "typescript": "~5.6.2",
-    "vite": "^8.2.2"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
